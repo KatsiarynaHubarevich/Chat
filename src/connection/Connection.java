@@ -13,7 +13,6 @@ public class Connection extends Thread {
     private PrintWriter out;
     private Socket socket;
 
-
     public Connection(Socket socket) {
         this.socket = socket;
         try {
@@ -37,12 +36,10 @@ public class Connection extends Thread {
                     vr.sendMessage(word);
                 }
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
 
     public void sendMessage(String msg) {
         out.write(msg + "\n");

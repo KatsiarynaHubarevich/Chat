@@ -1,11 +1,7 @@
 package client;
 
-import connection.Connection;
-
 import java.io.*;
-import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -15,11 +11,10 @@ public class Client {
     private BufferedReader in;
     private BufferedWriter out;
     private BufferedReader inputUser;
-    private String addr;
     private String nickname;
-    private Date time;
-    private String dtime;
-    private SimpleDateFormat dt1;
+    private Date date;
+    private String time;
+    private SimpleDateFormat dateFormat;
 
     public static String ipAddr = "localhost";
     public static int port = 8081;
@@ -29,13 +24,14 @@ public class Client {
     }
 
     public Client(String ipAddr, int port) {
-        this.addr = ipAddr;
+        this.ipAddr = ipAddr;
         this.port = port;
         try {
-            this.socket = new Socket(addr, port);
+            this.socket = new Socket(ipAddr, port);
         } catch (IOException e) {
             System.err.println("Socket failed");
         }
+
         try {
             inputUser = new BufferedReader(new InputStreamReader(System.in));
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -49,10 +45,10 @@ public class Client {
     }
 
     private void pressNickname() {
-        System.out.print("Enter your nick: ");
+        System.out.print("Enter your nickname: ");
         try {
             nickname = inputUser.readLine();
-            out.write(nickname + "is connected" + "\n");
+            out.write(nickname + " is connected" + "\n");
             out.flush();
         } catch (IOException e) {
             e.printStackTrace();
@@ -63,7 +59,6 @@ public class Client {
     private class ReadMsg extends Thread {
         @Override
         public void run() {
-
             String str;
             try {
                 while (true) {
@@ -85,21 +80,20 @@ public class Client {
             while (true) {
                 String userWord;
                 try {
-                    time = new Date();
-                    dt1 = new SimpleDateFormat("HH:mm:ss");
-                    dtime = dt1.format(time);
+                    date = new Date();
+                    dateFormat = new SimpleDateFormat("HH:mm:ss");
+                    time = dateFormat.format(date);
                     userWord = inputUser.readLine();
                     if (userWord.equals("stop")) {
                         out.write("stop" + "\n");
                         break;
                     } else {
-                        out.write("(" + dtime + ") " + nickname + ": " + userWord + "\n");
+                        out.write("(" + time + ") " + nickname + ": " + userWord + "\n");
                     }
                     out.flush();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
             }
         }
     }
